@@ -1,0 +1,4 @@
+useDynLib(iMDH, .registration=TRUE)
+importFrom("Rcpp", "evalCpp")
+importFrom("graphics", "plot", "abline", "lines", "par", "points")
+export("imdh", "imdh_assign")

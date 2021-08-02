@@ -1,0 +1,14 @@
+Package: iMDH
+Type: Package
+Title: Incremental estimation of minimum density hyperplanes for clustering
+Version: 0.1.0
+Author: David P. Hofmeyr
+Maintainer: David P. Hofmeyr <dhofmeyr@sun.ac.za>
+Description: Uses stochastic gradient descent to estimate low density separators for clustering. These are combined in a
+ divisive hierarchical model to obtain a complete clustering solution. A pruning refinement based on in-cluster sum-of-squares
+ is used to obtain a final model, and an appropriate number of clusters can be chosen automatically or manually.
+License: GPL
+Encoding: UTF-8
+Depends: Rcpp (>= 0.12.16)
+LinkingTo: Rcpp, RcppArmadillo
+LazyData: true
