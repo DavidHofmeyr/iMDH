@@ -17,15 +17,21 @@ imdh(X, sol = NULL, depth = 8, hmult = 1, epoch = 2, C = 10, alpha = .1, tmax = 
   \item{epoch}{(optional) integer number of passes through the data allowed. Default is 2. Because the clustering solution is particularly variable early on it is recommended that either at least 2 passes are used, or if 1 pass is used then a subsequent assignment be performed using function imdh_assign}
   \item{C}{(optional) positive numeric used as a Lagrange type multiplier. Recommend leaving at default value of 10}
   \item{alpha}{(optional) non-negative numeric}
-  \item{hnorm}{(optional) to make implementation compatible with existing R functions for bandwidth selection, which usually by default provide the bandwidth value for the Gaussian kernel. If hnorm is provided then fkde will convert this to the corresponding value for the kernel being used, based on the AMISE value relative to that of the Gaussian.}
+  \item{tmax}{(optional) integer maximum effective sample size. Introduces forgetting to stop convergence if underlying distribution might be non-stationary.}
+  \item{scale}{(optional) should the variables be scaled to have variance 1? 1 for "yes" and 0 for "no". Default is 1/yes.}
+  \item{t_init0}{(optional) integer sample size to obtain initial estimate of mean and standard deviation in each variable. Default is number of variables/dimensions.}          
+  \item{refine}{(optional) should the complete binary tree be pruned? Default is TRUE.}
+  \item{k}{(optional) number of clusters desired in solution. Default is 2^(depth-1) if refine is FALSE and automatically selected if refine is TRUE.}
 }
 \examples{
-# generate a sample of size 1000000 from heavily skewed density
-x <- dataGen(1000000, 5)
-# obtain exact kernel estimate and a binned approximation on a grid of 1000 points
-system.time(f_exact <- fkde(x, ngrid = 1000))
-system.time(f_binned <- fkde(x, nbin = 1000))
-# estimate the MISE
-MISE(5, f_exact$x, f_exact$y)
-MISE(5, f_binned$x, f_binned$y)
+# load pendigits data set
+data('pendigits')
+
+# obtain clustering solution
+imdh_model <- imdh(pendigits$x)
+  
+# plot projection of data onto first two projection vectors in model with colours according to clusters and true classes
+par(mfrow = c(1, 2))
+plot(pendigits$x%*%imdh_model$V, col = imdh_model$clusters)
+plot(pendigits$x%*%imdh_model$V, col = pendigits$c+1)
 }
