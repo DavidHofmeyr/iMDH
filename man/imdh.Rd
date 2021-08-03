@@ -32,6 +32,6 @@ imdh_model <- imdh(pendigits$x)
   
 # plot projection of data onto first two projection vectors in model with colours according to clusters and true classes
 par(mfrow = c(1, 2))
-plot(pendigits$x%*%imdh_model$V, col = imdh_model$clusters)
-plot(pendigits$x%*%imdh_model$V, col = pendigits$c+1)
+plot(pendigits$x\%*\%imdh_model$V, col = imdh_model$clusters)
+plot(pendigits$x\%*\%imdh_model$V, col = pendigits$c+1)
 }
