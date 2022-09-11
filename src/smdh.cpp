@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 
-List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ss, arma::vec ssss, IntegerVector t_init, double hmult, double C, int t_max, double alpha, arma::vec clusters, arma::vec scl, arma::vec mu0, int scale, int t_init0){
+List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ss, arma::vec ssss, IntegerVector t_init, double hmult, double C, int t_max, double alpha, arma::vec clusters, arma::vec scl, arma::vec mu0, int scale, int t_init0, double q, double r){
   int n = arma::size(X)[0];
   int d = arma::size(X)[1];
   arma::vec xx(d);
@@ -19,6 +19,8 @@ List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, ar
   int index;
   int t;
   double div;
+  //double hpow = .2; //1.0/(4.0+d);
+  double denom;
   //Rprintf("%s \n", "tt");
   for(int tt = 0; tt < n; tt++){
     if(scale==1){
@@ -41,6 +43,7 @@ List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, ar
       ts[index] += 1;
       t = ts[index] + t_init[index];
       if(t > t_max) t = t_max;
+      denom = pow(t+1.0,r);
       mean.col(index) = t/(t+1.0)*mean.col(index) + xx/(t+1.0);
       x = xx - mean.col(index);
       nv = norm(V.col(index), 2);
@@ -48,16 +51,14 @@ List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, ar
       p = x.t()*V.col(index);
       ss[index] = ss[index]*t/(t+1.0) + p[0]*p[0]/(t+1.0);
       ssss[index] += arma::accu(pow(x, 2));
-      h = pow(ss[index], .5)*hmult/pow(t+1.0, .2);
-      //h = pow(ss[index], .5)*hmult/pow(t+1.0, .16);
-      V.col(index) -= sqrt(d)*(b[index]-p[0])*exp(-pow(b[index]-p[0], 2)/2.0/h/h)*x/(t+1.0)/h/h/h;
-      //V.col(index) -= (b[index]-p[0])*exp(-pow(b[index]-p[0], 2)/2.0/h/h)*x/(t+1.0)/h/h/h;
-      db = -(b[index]-p[0])*exp(-pow(b[index]-p[0], 2)/2.0/h/h - log(t+1.0) - 3*log(h));
-      if(b[index] > (alpha*sqrt(ss[index]))) db += 2*C*(b[index]-alpha*sqrt(ss[index]))/(t+1.0);
-      if(b[index] < (-alpha*sqrt(ss[index]))) db -= 2*C*(-alpha*sqrt(ss[index])-b[index])/(t+1.0);
+      h = pow(ss[index], .5)*hmult/pow(t+1.0, q);
+      V.col(index) -= .3989*sqrt(d)*(b[index]-p[0])*exp(-pow(b[index]-p[0], 2)/2.0/h/h)*x/denom/h/h/h;
+      db = -.3989*(b[index]-p[0])*exp(-pow(b[index]-p[0], 2)/2.0/h/h - log(denom) - 3*log(h));
+      if(b[index] > (alpha*sqrt(ss[index]))) db += 2*C*(b[index]-alpha*sqrt(ss[index]))/denom;
+      if(b[index] < (-alpha*sqrt(ss[index]))) db -= 2*C*(-alpha*sqrt(ss[index])-b[index])/denom;
       b[index] -= db;
-      //if(b[index] > (alpha*sqrt(ss[index]))) b[index] = alpha*sqrt(ss[index]);
-      //if(b[index] < (-alpha*sqrt(ss[index]))) b[index] = -alpha*sqrt(ss[index]);
+      if(b[index] > (5*alpha*sqrt(ss[index]))) b[index] = 5*alpha*sqrt(ss[index]);
+      if(b[index] < (-5*alpha*sqrt(ss[index]))) b[index] = -5*alpha*sqrt(ss[index]);
       p = x.t()*V.col(index)/norm(V.col(index), 2);
       if(p[0] < b[index]) index = 2*index+1;
       else index = 2*index+2;
@@ -77,9 +78,15 @@ List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, ar
   return(ret);
 }
 
+
+
+
+
+
+
 // [[Rcpp::export]]
 
-List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ssss, arma::vec scl, arma::vec mu0, int scale){
+List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ssss, arma::vec ts, arma::vec scl, arma::vec mu0, int scale){
   int n = arma::size(X)[0];
   int d = arma::size(X)[1];
   arma::vec xx(d);
@@ -103,15 +110,21 @@ List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mea
     index = 0;
     while(index < dp){
       clusters[tt] = index;
+      ts[index] += 1;
       x = xx - mean.col(index);
       p = x.t()*V.col(index);
+      //if(prune == 1) ssss[index] += arma::accu(pow(x, 2));
+      //else ssss[index] += arma::accu(pow(x, 2)/(mean2.col(index)-pow(mean.col(index), 2)));
       ssss[index] += arma::accu(pow(x, 2));
       if(p[0] < b[index]) index = 2*index+1;
       else index = 2*index+2;
     }
   }
-  List ret(2);
+  List ret(3);
   ret[0] = clusters;
   ret[1] = ssss;
+  ret[2] = ts;
   return(ret);
 }
+
+
