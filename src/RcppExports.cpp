@@ -6,9 +6,14 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // smdh_list_div_cpp
-List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ss, arma::vec ssss, IntegerVector t_init, double hmult, double C, int t_max, double alpha, arma::vec clusters, arma::vec scl, arma::vec mu0, int scale, int t_init0);
-RcppExport SEXP _iMDH_smdh_list_div_cpp(SEXP XSEXP, SEXP VSEXP, SEXP bSEXP, SEXP meanSEXP, SEXP ssSEXP, SEXP ssssSEXP, SEXP t_initSEXP, SEXP hmultSEXP, SEXP CSEXP, SEXP t_maxSEXP, SEXP alphaSEXP, SEXP clustersSEXP, SEXP sclSEXP, SEXP mu0SEXP, SEXP scaleSEXP, SEXP t_init0SEXP) {
+List smdh_list_div_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ss, arma::vec ssss, IntegerVector t_init, double hmult, double C, int t_max, double alpha, arma::vec clusters, arma::vec scl, arma::vec mu0, int scale, int t_init0, double q, double r);
+RcppExport SEXP _iMDH_smdh_list_div_cpp(SEXP XSEXP, SEXP VSEXP, SEXP bSEXP, SEXP meanSEXP, SEXP ssSEXP, SEXP ssssSEXP, SEXP t_initSEXP, SEXP hmultSEXP, SEXP CSEXP, SEXP t_maxSEXP, SEXP alphaSEXP, SEXP clustersSEXP, SEXP sclSEXP, SEXP mu0SEXP, SEXP scaleSEXP, SEXP t_init0SEXP, SEXP qSEXP, SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,13 +33,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type mu0(mu0SEXP);
     Rcpp::traits::input_parameter< int >::type scale(scaleSEXP);
     Rcpp::traits::input_parameter< int >::type t_init0(t_init0SEXP);
-    rcpp_result_gen = Rcpp::wrap(smdh_list_div_cpp(X, V, b, mean, ss, ssss, t_init, hmult, C, t_max, alpha, clusters, scl, mu0, scale, t_init0));
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    rcpp_result_gen = Rcpp::wrap(smdh_list_div_cpp(X, V, b, mean, ss, ssss, t_init, hmult, C, t_max, alpha, clusters, scl, mu0, scale, t_init0, q, r));
     return rcpp_result_gen;
 END_RCPP
 }
 // smdh_list_div_pass_cpp
-List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ssss, arma::vec scl, arma::vec mu0, int scale);
-RcppExport SEXP _iMDH_smdh_list_div_pass_cpp(SEXP XSEXP, SEXP VSEXP, SEXP bSEXP, SEXP meanSEXP, SEXP ssssSEXP, SEXP sclSEXP, SEXP mu0SEXP, SEXP scaleSEXP) {
+List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mean, arma::vec ssss, arma::vec ts, arma::vec scl, arma::vec mu0, int scale);
+RcppExport SEXP _iMDH_smdh_list_div_pass_cpp(SEXP XSEXP, SEXP VSEXP, SEXP bSEXP, SEXP meanSEXP, SEXP ssssSEXP, SEXP tsSEXP, SEXP sclSEXP, SEXP mu0SEXP, SEXP scaleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,17 +50,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mean(meanSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type ssss(ssssSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ts(tsSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type scl(sclSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type mu0(mu0SEXP);
     Rcpp::traits::input_parameter< int >::type scale(scaleSEXP);
-    rcpp_result_gen = Rcpp::wrap(smdh_list_div_pass_cpp(X, V, b, mean, ssss, scl, mu0, scale));
+    rcpp_result_gen = Rcpp::wrap(smdh_list_div_pass_cpp(X, V, b, mean, ssss, ts, scl, mu0, scale));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_iMDH_smdh_list_div_cpp", (DL_FUNC) &_iMDH_smdh_list_div_cpp, 16},
-    {"_iMDH_smdh_list_div_pass_cpp", (DL_FUNC) &_iMDH_smdh_list_div_pass_cpp, 8},
+    {"_iMDH_smdh_list_div_cpp", (DL_FUNC) &_iMDH_smdh_list_div_cpp, 18},
+    {"_iMDH_smdh_list_div_pass_cpp", (DL_FUNC) &_iMDH_smdh_list_div_pass_cpp, 9},
     {NULL, NULL, 0}
 };
 
