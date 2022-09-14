@@ -1,9 +1,9 @@
 
-imdh <- function(X, sol = NULL, depth = 8, hmult = 1, q = 1/6, r = 1, epoch = 2, C = 1, alpha = .25, tmax = 100000000, scale = 1, t_init0 = NULL, refine = TRUE, forward = FALSE, k = NULL){
+imdh <- function(X, sol = NULL, depth = 7, hmult = 1, q = 1/6, r = 1, epoch = 2, C = 1, alpha = .25, tmax = 100000000, scale = 1, t_init0 = NULL, refine = TRUE, forward = FALSE, k = NULL){
   n <- nrow(X)
   d <- ncol(X)
   if(is.null(sol)){
-    nterms <- 2^depth-1
+    nterms <- 2^(depth+1)-1
     b <- numeric(nterms)
     if(is.null(t_init0)) t_init0 <- d
     mu0 <- colMeans(X[1:t_init0,])
@@ -34,11 +34,6 @@ imdh <- function(X, sol = NULL, depth = 8, hmult = 1, q = 1/6, r = 1, epoch = 2,
   }
   sol
 }
-
-
-
-
-
 
 
 
