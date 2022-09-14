@@ -127,4 +127,3 @@ List smdh_list_div_pass_cpp(arma::mat X, arma::mat V, arma::vec b, arma::mat mea
   return(ret);
 }
 
-
