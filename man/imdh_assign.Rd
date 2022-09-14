@@ -7,12 +7,13 @@ Assign data to clusters using an imdh model.
 Performs cluster assignments from an imdh model without updating model parameters as passing through data.
 }
 \usage{
-imdh_assign(X, sol, refine = TRUE, k = NULL)
+imdh_assign(X, sol, refine = TRUE, forward = FALSE, k = NULL)
 }
 \arguments{
   \item{X}{Matrix of data to be clustered with observations row-wise and variables column-wise.}
   \item{sol}{A clustering solution obtained from the imdh function.}
   \item{refine}{(optional) should the complete binary tree be pruned? Default is TRUE.}
+  \item{forward}{(optional) should the pruning be based on forward addition of nodes or backward removal of nodes? Default is FALSE.}
   \item{k}{(optional) number of clusters desired in solution. Default is 2^(depth-1) if refine is FALSE and automatically selected if refine is TRUE.}
 }
 \examples{
