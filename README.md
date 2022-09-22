@@ -1,6 +1,6 @@
 # iMDH
 
-Fast and exact kernel density estimation
+Fast clustering with divisive hierarchical model based on low density hyperplanes
 
 To install from within R console:
 
